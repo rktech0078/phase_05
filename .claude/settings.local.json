@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"D:\\\\AGENTIC_AI\\\\Hackhathon 2\\\\phase_04\\\\.specify\\\\scripts\\\\bash\"\" 2>&1 || echo \"Scripts directory not found \")",
+      "Bash(.specify/scripts/bash/update-agent-context.sh claude)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
+      "Bash(git rev-parse --git-dir)",
+      "Bash(docker --version)",
+      "Bash(minikube version)",
+      "Bash(kubectl version --client)",
+      "Bash(helm version --short)",
+      "Bash(where minikube)",
+      "Bash(minikube addons enable metrics-server)",
+      "Bash(minikube addons enable dashboard)",
+      "Bash(kubectl get service todo-chatbot-service)",
+      "Bash(kubectl describe pod -l app=todo-chatbot)",
+      "Bash(kubectl get deployment todo-chatbot-deployment)",
+      "Bash(kubectl logs -l app=todo-chatbot --tail=20)",
+      "Bash(minikube service todo-chatbot-service --url)",
+      "Bash(kubectl get pods -l app=todo-chatbot)",
+      "Bash(curl -s http://127.0.0.1:60556/api/health)",
+      "Bash(curl -s http://127.0.0.1:60556/api/ready)",
+      "Bash(helm list)",
+      "Bash(kubectl get pods -l app.kubernetes.io/name=todo-chatbot)"
+    ]
+  }
+}

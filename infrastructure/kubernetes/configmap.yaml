@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-chatbot-config
+  labels:
+    app: todo-chatbot
+    managed-by: manual
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  NEXT_TELEMETRY_DISABLED: "1"

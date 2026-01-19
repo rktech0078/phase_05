@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 Fun Kids Zone! 🎉</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #FF6B9D;
+            --purple: #9B59B6;
+            --blue: #3498DB;
+            --green: #2ECC71;
+            --yellow: #F1C40F;
+            --orange: #E67E22;
+            --red: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Floating Bubbles Animation */
+        .bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            border-radius: 50%;
+            animation: rise 10s infinite ease-in;
+            opacity: 0.7;
+        }
+
+        .bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; background: var(--pink); animation-duration: 8s; }
+        .bubble:nth-child(2) { width: 20px; height: 20px; left: 20%; background: var(--yellow); animation-duration: 5s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 50px; height: 50px; left: 35%; background: var(--blue); animation-duration: 7s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 80px; height: 80px; left: 50%; background: var(--green); animation-duration: 11s; animation-delay: 0s; }
+        .bubble:nth-child(5) { width: 35px; height: 35px; left: 55%; background: var(--orange); animation-duration: 6s; animation-delay: 1s; }
+        .bubble:nth-child(6) { width: 45px; height: 45px; left: 65%; background: var(--purple); animation-duration: 8s; animation-delay: 3s; }
+        .bubble:nth-child(7) { width: 25px; height: 25px; left: 70%; background: var(--red); animation-duration: 9s; animation-delay: 4s; }
+        .bubble:nth-child(8) { width: 55px; height: 55px; left: 80%; background: var(--yellow); animation-duration: 10s; animation-delay: 2s; }
+        .bubble:nth-child(9) { width: 30px; height: 30px; left: 90%; background: var(--pink); animation-duration: 6s; animation-delay: 3s; }
+        .bubble:nth-child(10) { width: 60px; height: 60px; left: 5%; background: var(--blue); animation-duration: 12s; animation-delay: 1s; }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0) scale(1);
+            }
+            50% {
+                transform: translateX(100px) scale(1.1);
+            }
+            100% {
+                bottom: 110%;
+                transform: translateX(-50px) scale(0.8);
+            }
+        }
+
+        /* Main Content */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: white;
+            text-shadow: 4px 4px 0 var(--pink), 8px 8px 0 var(--purple);
+            animation: bounce 2s ease infinite;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        nav a {
+            background: white;
+            color: var(--purple);
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        nav a:hover {
+            transform: scale(1.1) rotate(-3deg);
+            background: var(--yellow);
+            color: #333;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: white;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin: 20px 0;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            color: #333;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 15px 40px rgba(241, 196, 15, 0.6); }
+        }
+
+        .hero-image {
+            font-size: 15rem;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 60px 0;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+            animation: shine 0.5s forwards;
+        }
+
+        @keyframes shine {
+            to { transform: rotate(45deg) translate(50%, 50%); }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+        }
+
+        .feature-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: var(--purple);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Fun Facts Section */
+        .fun-facts {
+            background: rgba(255,255,255,0.15);
+            border-radius: 40px;
+            padding: 50px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .fun-facts h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .facts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .fact-item {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .fact-item:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+
+        .fact-item span {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .fact-item p {
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        footer p {
+            font-size: 1.2rem;
+        }
+
+        .social-icons {
+            margin-top: 20px;
+            font-size: 2.5rem;
+        }
+
+        .social-icons a {
+            margin: 0 10px;
+            text-decoration: none;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        /* Stars Animation */
+        .star {
+            position: fixed;
+            color: white;
+            font-size: 1.5rem;
+            animation: twinkle 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Bubbles -->
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <!-- Twinkling Stars -->
+    <span class="star" style="top: 10%; left: 5%;">⭐</span>
+    <span class="star" style="top: 20%; left: 15%; animation-delay: 0.5s;">✨</span>
+    <span class="star" style="top: 5%; left: 80%;">⭐</span>
+    <span class="star" style="top: 30%; left: 90%; animation-delay: 1s;">✨</span>
+    <span class="star" style="top: 60%; left: 95%; animation-delay: 0.3s;">⭐</span>
+    <span class="star" style="top: 70%; left: 3%; animation-delay: 0.7s;">✨</span>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">🎈 Fun Kids Zone! 🎈</div>
+            <p class="tagline">Learn, Play & Grow Together! 🚀</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav>
+            <a href="#games">🎮 Games</a>
+            <a href="#learn">📚 Learn</a>
+            <a href="#stories">📖 Stories</a>
+            <a href="#art">🎨 Art</a>
+            <a href="#music">🎵 Music</a>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Welcome to the Most Fun Place on the Internet!</h1>
+                <p>Discover amazing games, exciting stories, cool art projects, and so much more! Every day is an adventure here! 🌟</p>
+                <a href="#play" class="cta-btn">Let's Play! 🎉</a>
+            </div>
+            <div class="hero-image">🦄</div>
+        </section>
+
+        <!-- Features -->
+        <section class="features">
+            <div class="feature-card">
+                <span class="feature-icon">🎮</span>
+                <h3>Super Fun Games</h3>
+                <p>Play exciting games that make learning awesome! Puzzles, adventures & more!</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📚</span>
+                <h3>Cool Learning</h3>
+                <p>Discover amazing facts about dinosaurs, space, animals & the world!</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎨</span>
+                <h3>Creative Art</h3>
+                <p>Draw, color, and create beautiful masterpieces! Unleash your inner artist!</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📖</span>
+                <h3>Magical Stories</h3>
+                <p>Read enchanting tales of heroes, dragons, and magical lands far away!</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎵</span>
+                <h3>Dance & Music</h3>
+                <p>Sing along to catchy tunes and learn fun dance moves!</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🧪</span>
+                <h3>Science Lab</h3>
+                <p>Cool experiments and discoveries that will blow your mind! 💥</p>
+            </div>
+        </section>
+
+        <!-- Fun Facts -->
+        <section class="fun-facts">
+            <h2>🌟 Quick Fun Facts! 🌟</h2>
+            <div class="facts-grid">
+                <div class="fact-item">
+                    <span>🦕</span>
+                    <p>Dinosaurs lived 65 million years ago!</p>
+                </div>
+                <div class="fact-item">
+                    <span>🌍</span>
+                    <p>Earth is 4.5 billion years old!</p>
+                </div>
+                <div class="fact-item">
+                    <span>🐙</span>
+                    <p>Octopuses have 3 hearts!</p>
+                </div>
+                <div class="fact-item">
+                    <span>🚀</span>
+                    <p>The moon is 238,855 miles away!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>Made with ❤️ for awesome kids everywhere!</p>
+            <div class="social-icons">
+                <a href="#">🎪</a>
+                <a href="#">🎠</a>
+                <a href="#">🎢</a>
+                <a href="#">🎡</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.9rem;">© 2026 Fun Kids Zone - Where Every Day is an Adventure!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add more interactive stars randomly
+        function createStar() {
+            const star = document.createElement('span');
+            star.className = 'star';
+            star.textContent = Math.random() > 0.5 ? '⭐' : '✨';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(star);
+
+            setTimeout(() => star.remove(), 10000);
+        }
+
+        setInterval(createStar, 3000);
+
+        // Fun cursor trail effect
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.9) {
+                const trail = document.createElement('span');
+                trail.textContent = ['🌟', '✨', '💫', '⭐'][Math.floor(Math.random() * 4)];
+                trail.style.position = 'fixed';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                trail.style.pointerEvents = 'none';
+                trail.style.zIndex = '9999';
+                trail.style.fontSize = '1.5rem';
+                trail.style.transition = 'all 1s ease';
+                document.body.appendChild(trail);
+
+                setTimeout(() => {
+                    trail.style.opacity = '0';
+                    trail.style.transform = 'translateY(-50px) scale(0)';
+                }, 50);
+
+                setTimeout(() => trail.remove(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>

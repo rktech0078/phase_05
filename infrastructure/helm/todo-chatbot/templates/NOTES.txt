@@ -1,0 +1,25 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Your release is named {{ .Release.Name }}.
+
+To access your application:
+
+{{- if eq .Values.service.type "NodePort" }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "todo-chatbot.fullname" . }})
+  export NODE_IP=$(minikube ip)
+  echo "Visit http://$NODE_IP:$NODE_PORT to access your application"
+
+  Or use: minikube service {{ include "todo-chatbot.fullname" . }}
+{{- else if eq .Values.service.type "LoadBalancer" }}
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "todo-chatbot.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo "Visit http://$SERVICE_IP:{{ .Values.service.port }} to access your application"
+{{- else }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "todo-chatbot.fullname" . }} 8080:{{ .Values.service.port }}
+  echo "Visit http://localhost:8080 to access your application"
+{{- end }}
+
+To check the status of your deployment:
+  kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "todo-chatbot.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"
+
+To view logs:
+  kubectl logs -f --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "todo-chatbot.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"

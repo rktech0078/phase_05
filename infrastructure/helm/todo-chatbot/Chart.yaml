@@ -1,0 +1,16 @@
+apiVersion: v2
+name: todo-chatbot
+description: Helm chart for deploying Todo Chatbot to Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+keywords:
+  - nextjs
+  - todo
+  - kubernetes
+  - ai-devops
+
+maintainers:
+  - name: Phase IV Team
+    email: team@example.com

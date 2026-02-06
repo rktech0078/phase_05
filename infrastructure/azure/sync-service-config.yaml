@@ -1,0 +1,39 @@
+location: eastus
+name: sync-service
+resourceGroup: rg-todo-platform
+type: Microsoft.App/containerApps
+properties:
+  environmentId: /subscriptions/74d57c28-6ef3-4b79-b0fa-663db8274da4/resourceGroups/rg-todo-platform/providers/Microsoft.App/managedEnvironments/cae-todo-platform
+  configuration:
+    activeRevisionsMode: Single
+    dapr:
+      enabled: true
+      appId: sync-service
+      appPort: 3005
+      appProtocol: http
+    ingress:
+      external: false
+      allowInsecure: false
+      targetPort: 3005
+      transport: auto
+    registries:
+      - server: acrtodoplatform.azurecr.io
+        username: acrtodoplatform
+        passwordSecretRef: acr-password
+    secrets:
+      - name: acr-password
+        value: "G4PXgo9FmlAEb3gGIbkNXbRAgg1fUdsf2tIlO3zSV17yE0SxFQ5nJQQJ99CBACYeBjFEqg7NAAACAZCR6ZQ5"
+  template:
+    containers:
+      - image: acrtodoplatform.azurecr.io/sync-service:latest
+        name: sync-service
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: NODE_ENV
+            value: "production"
+          - name: SERVICE_NAME
+            value: "sync-service"
+          - name: APP_PORT
+            value: "3005"

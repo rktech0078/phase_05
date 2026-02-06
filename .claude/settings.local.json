@@ -22,7 +22,10 @@
       "Bash(curl -s http://127.0.0.1:60556/api/health)",
       "Bash(curl -s http://127.0.0.1:60556/api/ready)",
       "Bash(helm list)",
-      "Bash(kubectl get pods -l app.kubernetes.io/name=todo-chatbot)"
+      "Bash(kubectl get pods -l app.kubernetes.io/name=todo-chatbot)",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Initial Cloud-Native Constitution\" --stage constitution --json)",
+      "Bash(git fetch --all --prune)",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Event-Driven Architecture Planning\" --stage plan --feature \"001-event-driven-todo\" --json)"
     ]
   }
 }

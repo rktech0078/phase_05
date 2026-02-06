@@ -1,0 +1,22 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: reminder-cron
+  namespace: default
+spec:
+  type: bindings.cron
+  version: v1
+  metadata:
+  # Cron schedule: every 1 minute
+  - name: schedule
+    value: "@every 1m"
+
+  # Direction: input (triggers the service)
+  - name: direction
+    value: "input"
+
+  # Alternative cron expressions:
+  # Every 30 seconds: "@every 30s"
+  # Every 5 minutes: "*/5 * * * *"
+  # Every hour: "0 * * * *"
+  # Every day at midnight: "0 0 * * *"

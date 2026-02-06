@@ -1,0 +1,14 @@
+apiVersion: v2
+name: todo-platform
+description: Event-Driven Todo Chatbot Platform with Dapr and Kafka
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - todo
+  - microservices
+  - dapr
+  - kafka
+  - event-driven
+maintainers:
+  - name: Todo Platform Team

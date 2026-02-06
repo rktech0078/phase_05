@@ -1,0 +1,13 @@
+{
+  "name": "@todo-platform/schemas",
+  "version": "1.0.0",
+  "description": "Shared Drizzle ORM schemas for todo platform",
+  "main": "index.ts",
+  "types": "index.ts",
+  "keywords": ["schemas", "drizzle", "shared"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "drizzle-orm": "^0.45.1"
+  }
+}

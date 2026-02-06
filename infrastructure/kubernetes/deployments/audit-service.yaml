@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-service
+  namespace: todo-platform
+  labels:
+    app: audit-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-service
+  template:
+    metadata:
+      labels:
+        app: audit-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "audit-service"
+        dapr.io/app-port: "3004"
+        dapr.io/log-level: "info"
+        dapr.io/enable-metrics: "true"
+        dapr.io/metrics-port: "9090"
+    spec:
+      containers:
+      - name: audit-service
+        image: audit-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3004
+          name: http
+        env:
+        - name: APP_PORT
+          value: "3004"
+        - name: NODE_ENV
+          value: "production"
+        - name: SERVICE_NAME
+          value: "audit-service"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: DATABASE_URL
+        - name: DAPR_HOST
+          value: "localhost"
+        - name: DAPR_HTTP_PORT
+          value: "3500"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3004
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3

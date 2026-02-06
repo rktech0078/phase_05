@@ -1,0 +1,103 @@
+openapi: 3.0.3
+info:
+  title: Sync Service API
+  description: WebSocket API for real-time task synchronization
+  version: 1.0.0
+
+servers:
+  - url: ws://localhost:3005
+    description: Local development (WebSocket)
+  - url: ws://sync-service:3005
+    description: Kubernetes cluster (WebSocket)
+
+tags:
+  - name: WebSocket
+    description: Real-time synchronization
+  - name: Health
+    description: Health check endpoints
+
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      tags: [Health]
+      responses:
+        '200':
+          description: Service is alive
+
+  /ws:
+    get:
+      summary: WebSocket connection endpoint
+      description: Establish WebSocket connection for real-time updates
+      tags: [WebSocket]
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: Authentication token
+          schema:
+            type: string
+      responses:
+        '101':
+          description: Switching Protocols - WebSocket connection established
+        '401':
+          description: Unauthorized - invalid token
+
+components:
+  schemas:
+    WebSocketMessage:
+      type: object
+      required:
+        - type
+        - data
+      properties:
+        type:
+          type: string
+          enum: [task.created, task.updated, task.completed, task.deleted]
+        data:
+          type: object
+          description: Task data matching the event type
+
+    TaskCreatedMessage:
+      allOf:
+        - $ref: '#/components/schemas/WebSocketMessage'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [task.created]
+            data:
+              type: object
+              properties:
+                taskId:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                priority:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                dueDate:
+                  type: string
+                  format: date-time
+                  nullable: true
+
+    TaskUpdatedMessage:
+      allOf:
+        - $ref: '#/components/schemas/WebSocketMessage'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [task.updated]
+            data:
+              type: object
+              properties:
+                taskId:
+                  type: string
+                  format: uuid
+                changes:
+                  type: object

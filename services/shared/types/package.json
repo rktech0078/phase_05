@@ -1,0 +1,10 @@
+{
+  "name": "@todo-platform/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for todo platform",
+  "main": "index.ts",
+  "types": "index.ts",
+  "keywords": ["types", "shared"],
+  "author": "",
+  "license": "MIT"
+}

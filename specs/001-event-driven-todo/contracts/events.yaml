@@ -1,0 +1,578 @@
+# Event Schemas (CloudEvents Format)
+
+**Feature**: Event-Driven Todo Chatbot Platform
+**Date**: 2026-01-19
+**Format**: CloudEvents 1.0
+**Content Type**: application/json
+
+## Overview
+
+This document defines all event schemas used in the event-driven architecture. All events follow the CloudEvents 1.0 specification and are published to Kafka topics via Dapr pub/sub.
+
+---
+
+## Kafka Topics
+
+| Topic | Purpose | Partition Key | Retention |
+|-------|---------|---------------|-----------|
+| `task-events` | Task lifecycle events (created, updated, completed, deleted) | userId | 7 days |
+| `reminders` | Reminder scheduling and delivery events | userId | 7 days |
+| `task-updates` | Real-time sync events for WebSocket broadcast | userId | 1 day |
+
+---
+
+## CloudEvents Envelope
+
+All events use the CloudEvents 1.0 specification:
+
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.<aggregate>.<action>",
+  "source": "<service-name>",
+  "id": "<uuid>",
+  "time": "<ISO 8601 timestamp>",
+  "datacontenttype": "application/json",
+  "data": { ... }
+}
+```
+
+**Required Fields**:
+- `specversion`: Always "1.0"
+- `type`: Event type in format `com.todo.<aggregate>.<action>`
+- `source`: Service that published the event
+- `id`: Unique event ID (UUID v4)
+- `time`: Event timestamp (ISO 8601 format)
+- `datacontenttype`: Always "application/json"
+- `data`: Event payload (schema defined below)
+
+**Optional Fields**:
+- `subject`: Resource identifier (e.g., taskId)
+- `correlationid`: Correlation ID for distributed tracing (custom extension)
+
+---
+
+## Event Schemas
+
+### 1. TaskCreated
+
+**Type**: `com.todo.task.created`
+**Topic**: `task-events`
+**Source**: `task-service`
+**Description**: Published when a new task is created
+
+**Data Schema**:
+```json
+{
+  "taskId": "uuid",
+  "userId": "string",
+  "title": "string",
+  "description": "string | null",
+  "priority": "low | medium | high",
+  "tags": ["string"],
+  "dueDate": "ISO 8601 timestamp | null",
+  "recurrencePattern": "none | daily | weekly | monthly",
+  "isCompleted": false,
+  "createdAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.task.created",
+  "source": "task-service",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "time": "2026-01-19T10:30:00Z",
+  "subject": "task/123e4567-e89b-12d3-a456-426614174000",
+  "datacontenttype": "application/json",
+  "correlationid": "req-abc123",
+  "data": {
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "title": "Buy groceries",
+    "description": "Milk, eggs, bread",
+    "priority": "medium",
+    "tags": ["shopping", "personal"],
+    "dueDate": "2026-01-20T14:00:00Z",
+    "recurrencePattern": "none",
+    "isCompleted": false,
+    "createdAt": "2026-01-19T10:30:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Notification Service (schedules reminder if dueDate is set)
+- Audit Service (logs creation)
+- Sync Service (broadcasts to connected clients)
+
+---
+
+### 2. TaskUpdated
+
+**Type**: `com.todo.task.updated`
+**Topic**: `task-events`
+**Source**: `task-service`
+**Description**: Published when a task is updated
+
+**Data Schema**:
+```json
+{
+  "taskId": "uuid",
+  "userId": "string",
+  "changes": {
+    "title": { "old": "string", "new": "string" },
+    "description": { "old": "string | null", "new": "string | null" },
+    "priority": { "old": "low | medium | high", "new": "low | medium | high" },
+    "tags": { "old": ["string"], "new": ["string"] },
+    "dueDate": { "old": "ISO 8601 | null", "new": "ISO 8601 | null" },
+    "recurrencePattern": { "old": "none | daily | weekly | monthly", "new": "none | daily | weekly | monthly" }
+  },
+  "updatedAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.task.updated",
+  "source": "task-service",
+  "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "time": "2026-01-19T11:00:00Z",
+  "subject": "task/123e4567-e89b-12d3-a456-426614174000",
+  "datacontenttype": "application/json",
+  "correlationid": "req-def456",
+  "data": {
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "changes": {
+      "title": {
+        "old": "Buy groceries",
+        "new": "Buy groceries and cook dinner"
+      },
+      "priority": {
+        "old": "medium",
+        "new": "high"
+      },
+      "tags": {
+        "old": ["shopping", "personal"],
+        "new": ["shopping", "personal", "urgent"]
+      }
+    },
+    "updatedAt": "2026-01-19T11:00:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Notification Service (reschedules reminder if dueDate changed)
+- Audit Service (logs changes)
+- Sync Service (broadcasts to connected clients)
+
+---
+
+### 3. TaskCompleted
+
+**Type**: `com.todo.task.completed`
+**Topic**: `task-events`
+**Source**: `task-service`
+**Description**: Published when a task is marked as complete
+
+**Data Schema**:
+```json
+{
+  "taskId": "uuid",
+  "userId": "string",
+  "title": "string",
+  "recurrencePattern": "none | daily | weekly | monthly",
+  "dueDate": "ISO 8601 timestamp | null",
+  "completedAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.task.completed",
+  "source": "task-service",
+  "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+  "time": "2026-01-19T15:30:00Z",
+  "subject": "task/123e4567-e89b-12d3-a456-426614174000",
+  "datacontenttype": "application/json",
+  "correlationid": "req-ghi789",
+  "data": {
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "title": "Buy groceries and cook dinner",
+    "recurrencePattern": "weekly",
+    "dueDate": "2026-01-20T14:00:00Z",
+    "completedAt": "2026-01-19T15:30:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Recurring Service (generates next instance if recurrencePattern ≠ 'none')
+- Notification Service (cancels pending reminders)
+- Audit Service (logs completion)
+- Sync Service (broadcasts to connected clients)
+
+---
+
+### 4. TaskDeleted
+
+**Type**: `com.todo.task.deleted`
+**Topic**: `task-events`
+**Source**: `task-service`
+**Description**: Published when a task is deleted
+
+**Data Schema**:
+```json
+{
+  "taskId": "uuid",
+  "userId": "string",
+  "title": "string",
+  "isCompleted": "boolean",
+  "deletedAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.task.deleted",
+  "source": "task-service",
+  "id": "d4e5f6a7-b8c9-0123-def1-234567890123",
+  "time": "2026-01-19T16:00:00Z",
+  "subject": "task/123e4567-e89b-12d3-a456-426614174000",
+  "datacontenttype": "application/json",
+  "correlationid": "req-jkl012",
+  "data": {
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "title": "Buy groceries and cook dinner",
+    "isCompleted": true,
+    "deletedAt": "2026-01-19T16:00:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Audit Service (logs deletion)
+- Sync Service (broadcasts to connected clients)
+
+---
+
+### 5. ReminderScheduled
+
+**Type**: `com.todo.reminder.scheduled`
+**Topic**: `reminders`
+**Source**: `notification-service`
+**Description**: Published when a reminder is scheduled for a task
+
+**Data Schema**:
+```json
+{
+  "reminderId": "uuid",
+  "taskId": "uuid",
+  "userId": "string",
+  "taskTitle": "string",
+  "reminderTime": "ISO 8601 timestamp",
+  "scheduledAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.reminder.scheduled",
+  "source": "notification-service",
+  "id": "e5f6a7b8-c9d0-1234-ef12-345678901234",
+  "time": "2026-01-19T10:31:00Z",
+  "subject": "reminder/234f5678-f90c-23e4-b567-537725285111",
+  "datacontenttype": "application/json",
+  "correlationid": "req-abc123",
+  "data": {
+    "reminderId": "234f5678-f90c-23e4-b567-537725285111",
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "taskTitle": "Buy groceries",
+    "reminderTime": "2026-01-20T13:00:00Z",
+    "scheduledAt": "2026-01-19T10:31:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Audit Service (logs reminder scheduling)
+
+---
+
+### 6. ReminderTriggered
+
+**Type**: `com.todo.reminder.triggered`
+**Topic**: `reminders`
+**Source**: `notification-service`
+**Description**: Published when a reminder time arrives and notification is sent
+
+**Data Schema**:
+```json
+{
+  "reminderId": "uuid",
+  "taskId": "uuid",
+  "userId": "string",
+  "taskTitle": "string",
+  "dueDate": "ISO 8601 timestamp",
+  "triggeredAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.reminder.triggered",
+  "source": "notification-service",
+  "id": "f6a7b8c9-d0e1-2345-f123-456789012345",
+  "time": "2026-01-20T13:00:00Z",
+  "subject": "reminder/234f5678-f90c-23e4-b567-537725285111",
+  "datacontenttype": "application/json",
+  "data": {
+    "reminderId": "234f5678-f90c-23e4-b567-537725285111",
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "taskTitle": "Buy groceries",
+    "dueDate": "2026-01-20T14:00:00Z",
+    "triggeredAt": "2026-01-20T13:00:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Audit Service (logs reminder delivery attempt)
+
+---
+
+### 7. ReminderDelivered
+
+**Type**: `com.todo.reminder.delivered`
+**Topic**: `reminders`
+**Source**: `notification-service`
+**Description**: Published when a reminder notification is successfully delivered
+
+**Data Schema**:
+```json
+{
+  "reminderId": "uuid",
+  "taskId": "uuid",
+  "userId": "string",
+  "deliveredAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.reminder.delivered",
+  "source": "notification-service",
+  "id": "a7b8c9d0-e1f2-3456-a234-567890123456",
+  "time": "2026-01-20T13:00:05Z",
+  "subject": "reminder/234f5678-f90c-23e4-b567-537725285111",
+  "datacontenttype": "application/json",
+  "data": {
+    "reminderId": "234f5678-f90c-23e4-b567-537725285111",
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "deliveredAt": "2026-01-20T13:00:05Z"
+  }
+}
+```
+
+**Consumers**:
+- Audit Service (logs successful delivery)
+
+---
+
+### 8. ReminderFailed
+
+**Type**: `com.todo.reminder.failed`
+**Topic**: `reminders`
+**Source**: `notification-service`
+**Description**: Published when a reminder notification fails after all retries
+
+**Data Schema**:
+```json
+{
+  "reminderId": "uuid",
+  "taskId": "uuid",
+  "userId": "string",
+  "retryCount": "integer",
+  "error": "string",
+  "failedAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.reminder.failed",
+  "source": "notification-service",
+  "id": "b8c9d0e1-f2a3-4567-b345-678901234567",
+  "time": "2026-01-20T13:05:00Z",
+  "subject": "reminder/234f5678-f90c-23e4-b567-537725285111",
+  "datacontenttype": "application/json",
+  "data": {
+    "reminderId": "234f5678-f90c-23e4-b567-537725285111",
+    "taskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "retryCount": 3,
+    "error": "Push notification service unavailable",
+    "failedAt": "2026-01-20T13:05:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Audit Service (logs failure for investigation)
+
+---
+
+### 9. RecurringTaskGenerated
+
+**Type**: `com.todo.recurring.generated`
+**Topic**: `task-events`
+**Source**: `recurring-service`
+**Description**: Published when a new instance of a recurring task is generated
+
+**Data Schema**:
+```json
+{
+  "taskId": "uuid",
+  "parentTaskId": "uuid",
+  "userId": "string",
+  "title": "string",
+  "description": "string | null",
+  "priority": "low | medium | high",
+  "tags": ["string"],
+  "dueDate": "ISO 8601 timestamp",
+  "recurrencePattern": "daily | weekly | monthly",
+  "generatedAt": "ISO 8601 timestamp"
+}
+```
+
+**Example**:
+```json
+{
+  "specversion": "1.0",
+  "type": "com.todo.recurring.generated",
+  "source": "recurring-service",
+  "id": "c9d0e1f2-a3b4-5678-c456-789012345678",
+  "time": "2026-01-19T15:31:00Z",
+  "subject": "task/345g6789-g01d-34f5-c678-648836396222",
+  "datacontenttype": "application/json",
+  "correlationid": "req-ghi789",
+  "data": {
+    "taskId": "345g6789-g01d-34f5-c678-648836396222",
+    "parentTaskId": "123e4567-e89b-12d3-a456-426614174000",
+    "userId": "user-001",
+    "title": "Buy groceries and cook dinner",
+    "description": "Milk, eggs, bread",
+    "priority": "high",
+    "tags": ["shopping", "personal", "urgent"],
+    "dueDate": "2026-01-27T14:00:00Z",
+    "recurrencePattern": "weekly",
+    "generatedAt": "2026-01-19T15:31:00Z"
+  }
+}
+```
+
+**Consumers**:
+- Task Service (creates the new task in database)
+- Notification Service (schedules reminder for new task)
+- Audit Service (logs recurring task generation)
+- Sync Service (broadcasts to connected clients)
+
+---
+
+## Event Flow Diagrams
+
+### Task Creation Flow
+```
+User → Task Service → Kafka (task-events)
+                         ↓
+         ┌───────────────┼───────────────┐
+         ↓               ↓               ↓
+  Notification Svc   Audit Svc      Sync Svc
+  (schedule reminder) (log creation) (broadcast)
+```
+
+### Task Completion with Recurrence Flow
+```
+User → Task Service → Kafka (task-events: TaskCompleted)
+                         ↓
+         ┌───────────────┼───────────────┬───────────────┐
+         ↓               ↓               ↓               ↓
+  Recurring Svc   Notification Svc   Audit Svc      Sync Svc
+  (generate next) (cancel reminder)  (log)          (broadcast)
+         ↓
+  Kafka (task-events: RecurringTaskGenerated)
+         ↓
+  Task Service (create new task)
+```
+
+### Reminder Delivery Flow
+```
+Cron (1 min) → Notification Service → Check due reminders
+                                           ↓
+                                    Send notification
+                                           ↓
+                                    Kafka (reminders)
+                                           ↓
+                                    Audit Service (log)
+```
+
+---
+
+## Event Versioning Strategy
+
+### Backward Compatible Changes (No version bump)
+- Adding new optional fields to event data
+- Adding new event types
+
+### Breaking Changes (Version bump required)
+- Removing fields from event data
+- Changing field types
+- Renaming fields
+
+**Versioned Event Type Format**: `com.todo.<aggregate>.<action>.v<version>`
+
+**Example**: `com.todo.task.created.v2`
+
+### Migration Strategy
+1. Publish both old and new event versions during transition period
+2. Update consumers to handle both versions
+3. Deprecate old version after all consumers updated
+4. Remove old version after deprecation period (30 days)
+
+---
+
+## Summary
+
+This event schema defines:
+- ✅ 9 event types across 3 Kafka topics
+- ✅ CloudEvents 1.0 format for all events
+- ✅ Clear producer-consumer relationships
+- ✅ Comprehensive event data schemas with examples
+- ✅ Event flow diagrams for key workflows
+- ✅ Versioning strategy for schema evolution
+- ✅ Partition key strategy (userId) for ordering guarantees
+
+All events support distributed tracing via `correlationid` extension and enable complete audit trail of system operations.

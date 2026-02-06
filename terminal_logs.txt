@@ -1,0 +1,31 @@
+{"TimeStamp": "2026-02-06T19:16:26.1210008+00:00", "Log": "F   [cause]: AggregateError:"}    
+{"TimeStamp": "2026-02-06T19:16:26.1210019+00:00", "Log": "F       at async (.next/server/chunks/_a7b2bdc5._.js:8:45281)"}
+{"TimeStamp": "2026-02-06T19:16:26.1210315+00:00", "Log": "F       at async m.queryWithCache (.next/server/chunks/_a7b2bdc5._.js:8:41487)"}
+{"TimeStamp": "2026-02-06T19:16:26.1210353+00:00", "Log": "F       at async (.next/server/chunks/_a7b2bdc5._.js:8:45066)"}
+{"TimeStamp": "2026-02-06T19:16:26.1210379+00:00", "Log": "F       at async Object.findOne (.next/server/chunks/_c7b8ab89._.js:430:43788)"}
+{"TimeStamp": "2026-02-06T19:16:26.1210398+00:00", "Log": "F       at async Object.findUserByEmail (.next/server/chunks/_c7b8ab89._.js:68:15447)"}
+{"TimeStamp": "2026-02-06T19:16:26.1210968+00:00", "Log": "F       at async (.next/server/chunks/_c7b8ab89._.js:430:11152)"}
+{"TimeStamp": "2026-02-06T19:16:26.1211043+00:00", "Log": "F       at async o (.next/server/chunks/_c7b8ab89._.js:37:179287) {"}
+{"TimeStamp": "2026-02-06T19:16:26.1211082+00:00", "Log": "F     code: 'ECONNREFUSED'"}      
+{"TimeStamp": "2026-02-06T19:16:26.1211101+00:00", "Log": "F   }"}
+{"TimeStamp": "2026-02-06T19:16:26.1211121+00:00", "Log": "F }"
+
+
+
+
+**********************************************************************************************************************************************************************
+
+
+PS D:\AGENTIC_AI\Hackhathon 2\phase_05> .\infrastructure\azure\fix_auth_urls.ps1
+Getting frontend URL...
+D:\a\_work\1\s\build_scripts\windows\artifacts\cli\Lib\site-packages\cryptography/hazmat/backends/openssl/backend.py:8: UserWarning: You are using cryptography on a 32-bit Python on a 64-bit Windows Operating System. Cryptography will be significantly faster if you switch to using a 64-bit Python.
+WARNING: The behavior of this command has been altered by the following extension: containerapp
+Frontend URL: https://frontend.wonderfuldune-49749e01.eastus.azurecontainerapps.io
+
+Updating AUTH URLs...
+D:\a\_work\1\s\build_scripts\windows\artifacts\cli\Lib\site-packages\cryptography/hazmat/backends/openssl/backend.py:8: UserWarning: You are using cryptography on a 32-bit Python on a 64-bit Windows Operating System. Cryptography will be significantly faster if you switch to using a 64-bit Python.
+The behavior of this command has been altered by the following extension: containerapp
+(ContainerAppSecretRefNotFound) SecretRef 'auth-secret' defined for container 'frontend' not found.
+
+Done! Container restarting...
+Wait 30 seconds then test sign-in at: https://frontend.wonderfuldune-49749e01.eastus.azurecontainerapps.io/sign-in

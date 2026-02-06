@@ -1,0 +1,48 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub-kafka
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  # Kafka broker addresses
+  - name: brokers
+    value: "redpanda.infrastructure.svc.cluster.local:9092"
+
+  # Consumer group for the application
+  - name: consumerGroup
+    value: "todo-platform"
+
+  # Client ID for identification
+  - name: clientId
+    value: "todo-platform"
+
+  # Authentication type (none for local development)
+  - name: authType
+    value: "none"
+
+  # For production with Redpanda Cloud, use SASL authentication:
+  # - name: authType
+  #   value: "password"
+  # - name: saslUsername
+  #   secretKeyRef:
+  #     name: kafka-secrets
+  #     key: username
+  # - name: saslPassword
+  #   secretKeyRef:
+  #     name: kafka-secrets
+  #     key: password
+
+  # Consumer configuration
+  - name: consumeRetryInterval
+    value: "200ms"
+
+  # Enable idempotent producer
+  - name: enableIdempotence
+    value: "true"
+
+  # Message delivery timeout
+  - name: deliveryTimeout
+    value: "30s"

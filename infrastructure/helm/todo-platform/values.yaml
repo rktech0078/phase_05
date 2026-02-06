@@ -1,0 +1,116 @@
+# Default values for todo-platform
+# This is a YAML-formatted file.
+
+# Global settings
+global:
+  namespace: todo-platform
+  imagePullPolicy: IfNotPresent
+
+# Database configuration
+database:
+  url: ""  # Set via secrets
+
+# Redis configuration (for Dapr state store)
+redis:
+  enabled: true
+  host: redis-master.infrastructure.svc.cluster.local
+  port: 6379
+  password: ""
+
+# Kafka configuration (Redpanda)
+kafka:
+  enabled: true
+  brokers: redpanda.infrastructure.svc.cluster.local:9092
+
+# Task Service
+taskService:
+  enabled: true
+  name: task-service
+  replicaCount: 1
+  image:
+    repository: task-service
+    tag: latest
+  port: 3001
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Notification Service
+notificationService:
+  enabled: true
+  name: notification-service
+  replicaCount: 1
+  image:
+    repository: notification-service
+    tag: latest
+  port: 3002
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Recurring Service
+recurringService:
+  enabled: true
+  name: recurring-service
+  replicaCount: 1
+  image:
+    repository: recurring-service
+    tag: latest
+  port: 3003
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Audit Service
+auditService:
+  enabled: true
+  name: audit-service
+  replicaCount: 1
+  image:
+    repository: audit-service
+    tag: latest
+  port: 3004
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Sync Service
+syncService:
+  enabled: true
+  name: sync-service
+  replicaCount: 1
+  image:
+    repository: sync-service
+    tag: latest
+  httpPort: 3005
+  wsPort: 3006
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Dapr configuration
+dapr:
+  enabled: true
+  logLevel: info
+  enableMetrics: true
+  metricsPort: 9090

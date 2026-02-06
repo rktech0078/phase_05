@@ -1,0 +1,76 @@
+apiVersion: dapr.io/v1alpha1
+kind: Resiliency
+metadata:
+  name: default
+  namespace: default
+spec:
+  policies:
+    # Retry policy for pub/sub
+    retries:
+      pubsubRetry:
+        policy: constant
+        duration: 5s
+        maxRetries: 3
+
+      # Retry policy for service invocation
+      serviceRetry:
+        policy: exponential
+        maxInterval: 15s
+        maxRetries: 5
+
+    # Timeout policy
+    timeouts:
+      general:
+        timeout: 30s
+
+      longRunning:
+        timeout: 120s
+
+    # Circuit breaker policy
+    circuitBreakers:
+      simpleCB:
+        maxRequests: 1
+        interval: 30s
+        timeout: 60s
+        trip: consecutiveFailures >= 5
+
+  targets:
+    # Apply to all pub/sub operations
+    apps:
+      task-service:
+        retry: pubsubRetry
+        timeout: general
+        circuitBreaker: simpleCB
+
+      notification-service:
+        retry: pubsubRetry
+        timeout: general
+        circuitBreaker: simpleCB
+
+      recurring-service:
+        retry: pubsubRetry
+        timeout: general
+        circuitBreaker: simpleCB
+
+      audit-service:
+        retry: pubsubRetry
+        timeout: general
+        circuitBreaker: simpleCB
+
+      sync-service:
+        retry: pubsubRetry
+        timeout: general
+        circuitBreaker: simpleCB
+
+    # Apply to components
+    components:
+      pubsub-kafka:
+        outbound:
+          retry: pubsubRetry
+          timeout: general
+
+      statestore:
+        outbound:
+          retry: serviceRetry
+          timeout: general
+          circuitBreaker: simpleCB

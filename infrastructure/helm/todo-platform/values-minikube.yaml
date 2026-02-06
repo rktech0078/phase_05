@@ -1,0 +1,78 @@
+# Minikube-specific overrides
+# Use with: helm install todo-platform . -f values-minikube.yaml
+
+# Use local Docker images (built in Minikube)
+global:
+  imagePullPolicy: Never
+
+# Single replica for local development
+taskService:
+  replicaCount: 1
+
+notificationService:
+  replicaCount: 1
+
+recurringService:
+  replicaCount: 1
+
+auditService:
+  replicaCount: 1
+
+syncService:
+  replicaCount: 1
+
+# Reduced resources for local development
+taskService:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+notificationService:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+recurringService:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+auditService:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+syncService:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# Local Redpanda (Kafka alternative)
+kafka:
+  brokers: redpanda.infrastructure.svc.cluster.local:9092
+
+# Local Redis
+redis:
+  host: redis-master.infrastructure.svc.cluster.local
+  port: 6379
+  password: ""

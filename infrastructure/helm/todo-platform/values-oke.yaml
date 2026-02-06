@@ -1,0 +1,79 @@
+# Oracle OKE-specific overrides
+# Use with: helm install todo-platform . -f values-oke.yaml
+
+# Pull images from registry
+global:
+  imagePullPolicy: IfNotPresent
+
+# Single replica for Always Free tier
+taskService:
+  replicaCount: 1
+
+notificationService:
+  replicaCount: 1
+
+recurringService:
+  replicaCount: 1
+
+auditService:
+  replicaCount: 1
+
+syncService:
+  replicaCount: 1
+
+# Resource limits for Always Free tier (4 OCPU, 24 GB RAM total)
+taskService:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+notificationService:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+recurringService:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+auditService:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+syncService:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Production Kafka (Redpanda Cloud)
+kafka:
+  brokers: <REDPANDA_CLOUD_BROKER>:9092
+  # Add SASL authentication in secrets
+
+# Production Redis
+redis:
+  host: <REDIS_HOST>
+  port: 6379
+  # Add password in secrets

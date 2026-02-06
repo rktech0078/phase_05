@@ -1,0 +1,43 @@
+location: eastus
+name: audit-service
+resourceGroup: rg-todo-platform
+type: Microsoft.App/containerApps
+properties:
+  environmentId: /subscriptions/74d57c28-6ef3-4b79-b0fa-663db8274da4/resourceGroups/rg-todo-platform/providers/Microsoft.App/managedEnvironments/cae-todo-platform
+  configuration:
+    activeRevisionsMode: Single
+    dapr:
+      enabled: true
+      appId: audit-service
+      appPort: 3004
+      appProtocol: http
+    ingress:
+      external: false
+      allowInsecure: false
+      targetPort: 3004
+      transport: auto
+    registries:
+      - server: acrtodoplatform.azurecr.io
+        username: acrtodoplatform
+        passwordSecretRef: acr-password
+    secrets:
+      - name: acr-password
+        value: "G4PXgo9FmlAEb3gGIbkNXbRAgg1fUdsf2tIlO3zSV17yE0SxFQ5nJQQJ99CBACYeBjFEqg7NAAACAZCR6ZQ5"
+      - name: db-url
+        value: "postgresql://neondb_owner:npg_ViUF4kTjQc0u@ep-empty-night-a1f62zum-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  template:
+    containers:
+      - image: acrtodoplatform.azurecr.io/audit-service:latest
+        name: audit-service
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: NODE_ENV
+            value: "production"
+          - name: SERVICE_NAME
+            value: "audit-service"
+          - name: DATABASE_URL
+            secretRef: db-url
+          - name: APP_PORT
+            value: "3004"

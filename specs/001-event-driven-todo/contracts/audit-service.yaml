@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Audit Service API
+  description: Query API for task activity audit logs
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3004
+    description: Local development
+  - url: http://audit-service:3004
+    description: Kubernetes cluster (internal)
+
+tags:
+  - name: Audit Logs
+    description: Audit log query operations
+  - name: Health
+    description: Health check endpoints
+
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      tags: [Health]
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /ready:
+    get:
+      summary: Readiness probe
+      tags: [Health]
+      responses:
+        '200':
+          description: Service is ready
+
+  /api/audit/tasks/{taskId}:
+    get:
+      summary: Get task audit history
+      description: Retrieve all audit log entries for a specific task
+      tags: [Audit Logs]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Task audit history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditLogEntry'
+
+  /api/audit/users/{userId}:
+    get:
+      summary: Get user activity history
+      description: Retrieve recent activity for a user
+      tags: [Audit Logs]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+      responses:
+        '200':
+          description: User activity history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditLogEntry'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    AuditLogEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        taskId:
+          type: string
+          format: uuid
+          nullable: true
+        userId:
+          type: string
+        action:
+          type: string
+          enum: [created, updated, completed, deleted]
+        changes:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        correlationId:
+          type: string

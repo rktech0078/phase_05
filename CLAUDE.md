@@ -208,3 +208,10 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- TypeScript 5 (strict mode) / Node.js 18+ + Next.js 16.1.1, Dapr SDK (Node.js), Drizzle ORM 0.45.1, Better Auth 1.4.9, ws (WebSocket), ioredis (Dapr state store) (001-event-driven-todo)
+- Neon Serverless PostgreSQL (existing, external), Dapr State Store (Redis for task metadata), Kafka/Redpanda Cloud (event backbone) (001-event-driven-todo)
+
+## Recent Changes
+- 001-event-driven-todo: Added TypeScript 5 (strict mode) / Node.js 18+ + Next.js 16.1.1, Dapr SDK (Node.js), Drizzle ORM 0.45.1, Better Auth 1.4.9, ws (WebSocket), ioredis (Dapr state store)

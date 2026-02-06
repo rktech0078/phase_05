@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sync-service
+  namespace: todo-platform
+  labels:
+    app: sync-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sync-service
+  template:
+    metadata:
+      labels:
+        app: sync-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "sync-service"
+        dapr.io/app-port: "3005"
+        dapr.io/log-level: "info"
+        dapr.io/enable-metrics: "true"
+        dapr.io/metrics-port: "9090"
+    spec:
+      containers:
+      - name: sync-service
+        image: sync-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3005
+          name: http
+        - containerPort: 3006
+          name: websocket
+        env:
+        - name: APP_PORT
+          value: "3005"
+        - name: WS_PORT
+          value: "3006"
+        - name: NODE_ENV
+          value: "production"
+        - name: SERVICE_NAME
+          value: "sync-service"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: REDIS_HOST
+          value: "redis-master.infrastructure.svc.cluster.local"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: DAPR_HOST
+          value: "localhost"
+        - name: DAPR_HTTP_PORT
+          value: "3500"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3005
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3

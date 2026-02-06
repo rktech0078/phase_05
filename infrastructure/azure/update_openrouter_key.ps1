@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $RG = "rg-todo-platform"
 $APP = "frontend"
-$NEW_KEY = "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"
+$NEW_KEY = ""
 
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "Updating OpenRouter API Key" -ForegroundColor Cyan

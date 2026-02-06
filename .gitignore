@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+infrastructure\azure\frontend-config.yaml
+# Azure deployment configs (contain secrets)
+infrastructure/azure/*-config.yaml
+infrastructure/azure/*.yaml
+
+# Environment files
+.env.local
+.env*.local

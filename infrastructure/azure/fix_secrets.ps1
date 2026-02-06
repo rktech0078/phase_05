@@ -9,8 +9,7 @@ Write-Host "Fixing BETTER_AUTH_SECRET..." -ForegroundColor Yellow
 az containerapp secret set `
   --name $APP `
   --resource-group $RG `
-  --secrets "better-auth-secret=qTVmp/NQbah0P6sSMdU2WMCBjLQwdfOR/BFOHtU6yHA="
-
+  --secrets 
 Write-Host "Updating environment variable..." -ForegroundColor Yellow
 
 # Update env var to use secret

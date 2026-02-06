@@ -14,10 +14,7 @@ $FULL_URL = "https://$FRONTEND_URL"
 Write-Host "   URL: $FULL_URL" -ForegroundColor Green
 
 # Secrets
-$DB_URL = 'postgresql://neondb_owner:npg_ViUF4kTjQc0u@ep-empty-night-a1f62zum-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require'
-$AUTH_SECRET = "CScmNpQrZezguV+hM/nAmWrZpp428klCIAhic+R4OKo="
-$BETTER_AUTH_SECRET = "qTVmp/NQbah0P6sSMdU2WMCBjLQwdfOR/BFOHtU6yHA="
-$OPENROUTER_API_KEY = "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"
+
 
 Write-Host "`n2. Setting all secrets..." -ForegroundColor Yellow
 az containerapp secret set `

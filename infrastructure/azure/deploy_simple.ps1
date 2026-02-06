@@ -21,10 +21,6 @@ $ACR_USER = az acr credential show -n $ACR_NAME --query "username" -o tsv
 $ACR_PASS = az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv
 
 # Secrets
-$DB = 'postgresql://neondb_owner:npg_ViUF4kTjQc0u@ep-empty-night-a1f62zum-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-$AUTH = "CScmNpQrZezguV+hM/nAmWrZpp428klCIAhic+R4OKo="
-$BETTER = "qTVmp/NQbah0P6sSMdU2WMCBjLQwdfOR/BFOHtU6yHA="
-$OPENROUTER = "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"
 
 Write-Host "Deploying task-service..." -ForegroundColor Yellow
 az containerapp create `

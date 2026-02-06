@@ -8,9 +8,7 @@ az acr update -n $ACR_NAME --admin-enabled true > $null
 $ACR_PASSWORD = az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv
 
 # Secrets
-$DB_URL = 'postgresql://neondb_owner:npg_ViUF4kTjQc0u@ep-empty-night-a1f62zum-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-$AUTH_SECRET = "CScmNpQrZezguV+hM/nAmWrZpp428klCIAhic+R4OKo="
-$BETTER_AUTH_SECRET = "qTVmp/NQbah0P6sSMdU2WMCBjLQwdfOR/BFOHtU6yHA="
+
 
 # We use double quotes around the secret value in the command to protect it from the shell
 $DB_URL_SAFE = $DB_URL
